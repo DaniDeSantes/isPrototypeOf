@@ -1,0 +1,77 @@
+<script src="../tinytest.js"></script>
+<script>
+function isPrototypeOf(prototypeObj, object){
+	var nextPrototype = Object.getPrototypeOf(object);
+	while (nextPrototype !== null){
+		if (nextPrototype === prototypeObj){
+			return true;
+		} else {
+			nextPrototype = Object.getPrototypeOf(nextPrototype);
+		}
+	}
+	return false;
+};
+
+tests({
+  'It should return true if prototypeObj is the immediate prototype of object': function() {
+	var canine = {
+		bark: function(){
+			console.log('bark');
+		}
+	};
+	var dog = Object.create(canine);
+	var isPrototype = isPrototypeOf(canine, dog);
+	eq(isPrototype, true);
+  },
+  'It should return true if prototypeObj is anywhere in the prototype chain of object': function() {
+	var canine = {
+		bark: function(){
+			console.log('bark');
+		}
+	};
+	var dog = Object.create(canine);
+	dog.fetch = function() {
+		consol.log('fetch');
+	};
+	var myDog = Object.create(dog);
+	var isPrototype = isPrototypeOf(canine, myDog);
+	eq(isPrototype, true);
+  },
+  'It should return false if prototypeObj is not in the prototype chain of object': function() {
+	var canine = {
+		bark: function(){
+			console.log('bark');
+		}
+	};
+	var feline = {
+		meow: function(){
+			console.log('meow');
+		}
+	}
+	var dog = Object.create(canine);
+	var isPrototype = isPrototypeOf(feline, dog);
+	eq(isPrototype, false);
+  },
+  'It should throw a TypeError if prototypeObj is undefined': function() {
+	var testObject;
+	
+	try {
+		isPrototypeOf(undefined, testObject)
+	}
+	catch (e) {
+		eq(e instanceof TypeError, true);
+	}
+  },
+  'It should throw a TypeError if prototypeObj is null': function() {
+	var testObject;
+	
+	try {
+		isPrototypeOf(null, testObject)
+	}
+	catch (e) {
+		eq(e instanceof TypeError, true);
+	}
+  }
+});
+
+</script>
